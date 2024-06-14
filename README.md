@@ -11,3 +11,5 @@ In order to use the heatmap.plus (it can handle the NAs) package  I included in 
 You  may  need to install it from commandline.
 
 Use the terminal to navigate to the place where you the ```heatmap.plus_1.3.tar.gz``` file is.
+
+use: ```R CMD INSTALL <package-name>.tar.gz```
