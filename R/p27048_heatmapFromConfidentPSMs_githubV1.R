@@ -218,7 +218,7 @@ row_side_colors_matrix <- cbind(fwOrrevColor, specialProteinsClassification_body
 
 # color scheme for proteins
 colorNproteins <- data.frame(cbind(row_side_colors_matrix, myHumanProteins))
-write_tsv(colorNproteins, file = "ColorSchemeForProteins_new.tsv")
+#write_tsv(colorNproteins, file = "ColorSchemeForProteins_new.tsv")
 
 # plotting
 pdf("p27048_heatmap_HUMANonly_correctlyJoined_bigPage_withRowcolorsForSITES.pdf", 35,35)
@@ -235,19 +235,18 @@ heatmap.plus(
 dev.off()
 
 
-# identify blanks
+# identify blanks and take them out
 colnames(filtMat[bool_homo, ])
 
-idx_takeout <- which(grepl(x = colnames(filtMat[bool_homo, ]), "NA"))
-colnames(filtMat[bool_homo,-which(grepl(x = colnames(filtMat[bool_homo, ]), "NA"))])
+idx_takeout <- which(grepl(x = colnames(filtMat[bool_homo, ]), "NA~NA"))
+# to be taken out
+colnames(filtMat[bool_homo, idx_takeout]) 
 
-colnames(filtMat[bool_homo,-idx_takeout])
+# to keep
+colnames(filtMat[bool_homo,-which(grepl(x = colnames(filtMat[bool_homo, ]), "NA"))])
 
 
 # plotting
-
-
-
 pdf("p27048_heatmap_HUMANonly_betterColors_noBlanks_min5psms.pdf", 35,35)
 # Create the heatmap with row side colors list
 heatmap.plus(
@@ -260,6 +259,7 @@ heatmap.plus(
   main="Assigned PSM heatmap from all Human Proteins w multiple row and colSide Colors"
 )
 dev.off()
+
 
 
 # do more on filter w/ psms
