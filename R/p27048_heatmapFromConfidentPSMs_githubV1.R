@@ -20,15 +20,11 @@ source("p27048_somePreprocessing.R")
 table(datOK$nameTag)
 
 # joining back better sample names and col annotation from Shevan!
-# protAnno <- read_tsv(file = "p27048_allProteinsNoFilter_wDescription-V5.txt")
-# sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V2.txt")
 sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V6.txt")
 colnames(sampleAnno) <- c("rawFile", "nameTag", "Time", "Location")
 
 
 # protein annotation for better classification w/ Shevan
-#protAnno <- read_tsv(file = "p27048_allProteinsNoFilter_wDescription-V5_miniModJ.txt")
-#protAnno <- read.csv(file = "Human_proteins_classifications-V2_2024-05-27.csv")
 protAnno <- read.csv(file = "Human_proteins_classifications-V2_2024-05-27_noMoreDoubs.csv")
 colnames(protAnno) <- c("prot_acc","TrivialName", "Species", "Primary", "Secondary")
 table(protAnno$Primary)
