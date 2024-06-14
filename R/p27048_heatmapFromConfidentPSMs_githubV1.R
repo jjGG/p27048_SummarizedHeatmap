@@ -30,8 +30,6 @@ colnames(protAnno) <- c("prot_acc","TrivialName", "Species", "Primary", "Seconda
 table(protAnno$Primary)
 table(protAnno$Secondary)
 
-# go for uniprot GN if available
-colnames(protAnno)
 # decoy tag lost for trivial, bring it back
 decoyString <- rep("",nrow(protAnno))
 decoyBool <- str_count(string = protAnno$prot_acc,pattern = "REV_") >  0
@@ -49,18 +47,12 @@ sum(datJoined_withSampleAnno$nameTag.x == datJoined_withSampleAnno$nameTag.y, na
 datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.x
 
 # second join
-unique(protAnno$Primary)
-table(protAnno$Primary)
 # in some we find a space at the end before newline.. -> difficult to spot
 protAnno$TrivialName <- gsub(x = protAnno$TrivialName, pattern = " $", replacement = "")
-
-head(datJoined_withSampleAnno)
-head(protAnno)
 
 # why we cannnot join anymore?
 datJoined_withSampleAnno <- as.data.frame(datJoined_withSampleAnno)
 protAnno <- as.data.frame(protAnno)
-colnames(protAnno)
 
 # all left joined
 datJoined <- left_join(x = datJoined_withSampleAnno, y = protAnno, by = c("prot_acc" = "prot_acc"))
@@ -74,15 +66,18 @@ datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined
 
 # Now summarization to get heatmap
 # summarize psms by table -> all non human proteins will be NA~NA
-# write_tsv(datJoined, file = "AllDatJoinedBeforeTable.tsv")
 
 # we have to take species into protein name only like this makes sense
 dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
 
+dim(relevantTableMat)
+
+grepl(x = colnames(relevantTableMat), pattern = "enya")
+
 # looks like here we do loose a lot of psms.. where are they?
 # write_tsv(as.data.frame(relevantTableMat), "relevantTable_correctlyJoined_2024-06-07.tsv")
 
-# add sum column
+# get sum column
 head(relevantTableMat)
 myPSMsum <- rowSums(relevantTableMat)
 
@@ -94,8 +89,6 @@ get_protFDR(relevantTableMat)
 PSMthreshold <- 5
 
 bool_keep <- myPSMsum >= PSMthreshold
-sum(bool_keep)
-
 
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
@@ -105,16 +98,8 @@ get_protFDR(filtMat) # 1.105%
 
 
 # go for heatmap plotting w gplots
-# fill 0 with NA
 # df[df == 0] <- NA
 filtMat[filtMat == 0] <- NA
-#heatmap.2(dat2, trace="none", na.color = "black", scale="none", col = my_palette, breaks=breaks)
-my_palette <- colorRampPalette(c("yellow", "orange", "red")) (n=20)
-
-#full with all proteins
-heatmap.2(filtMat, na.color="grey", distfun=dist_no_na, trace="none", margins = c(10,5), col = my_palette)
-heatmap.2(filtMat, na.color="black", dendrogram = "column",  Rowv = FALSE, distfun=dist_no_na, trace="none", margins = c(10,5))
-
 
 # split for HUMAN
 myKeyword <- "Homo" # maybe here also use HUMAN to not loose contaminants..
@@ -122,13 +107,14 @@ myKeyword <- "Homo" # maybe here also use HUMAN to not loose contaminants..
 bool_homo <- str_count(string = row.names(filtMat), pattern = myKeyword) > 0
 sum(bool_homo) #  361 human proteins left
 length(bool_homo)
+
 filtMat[which(bool_homo == FALSE),] # this one NA~NA gathers quite some  psms.. -> these are NON Human proteins
 
 # work on protein row colors!!
 myHumanProteins <-data.frame(rownames(filtMat)[bool_homo])
 
 colnames(myHumanProteins) <- "FullDesc"
-myHumanProteins$desc <- sapply(strsplit(myHumanProteins$FullDesc, split = "~"), function(x)x[1])
+#myHumanProteins$desc <- sapply(strsplit(myHumanProteins$FullDesc, split = "~"), function(x)x[1])
 
 # check in original file for classes
 protAnno$desc <-  gsub(x = protAnno$TrivialName, pattern = " ", replacement = "_")
@@ -137,14 +123,13 @@ dim(protAnno)
 #we have to make protAnno unique first based on our annotation without sp-Acc
 protAnno_unique <- protAnno |> select(TrivialName, Species, Primary, Secondary) |> distinct()
 protAnno_unique$TrivialName <-  gsub(x = protAnno_unique$TrivialName, pattern = " ", replacement = "_")
-dim(protAnno)
-dim(protAnno_unique)
+#dim(protAnno)
+#dim(protAnno_unique)
 
 #  here is an issue -> issue solved by removing doubs from input, Keratin_32 classified  as Hair!
 colnames(protAnno_unique)[1] <- "desc"
 myHumanProteins <- left_join(x = myHumanProteins, y = protAnno_unique) #Joining with `by = join_by(desc)`
 dim(myHumanProteins) # why do we get more here?
-
 # Now we have 361 proteins (human) left
 
 #
@@ -163,8 +148,12 @@ table(Location)
 table(Times)
 
 # which ones are NAs -> what to do with it?
-colnames(filtMat)[Times == "NA"]
-colnames(filtMat)[Location == "NA"]
+colnames(filtMat)[Times == "NA"] # this filter can be used
+colnames(filtMat)[Location == "NA"] # we want to keep "090_Beth~NA~ARCH_SouthAfrica"
+
+# do we still have the kenya samples?
+grepl(x = colnames(filtMat), "enya") # no they are all gone?
+
 
 # Define colors for each level
 length(Location)
