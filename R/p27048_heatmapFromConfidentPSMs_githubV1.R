@@ -5,37 +5,18 @@
 #
 #
 
-source("p27048_usefulFunctions.R")
+# set wd to source file
+source("p27048_usefulFunctions.R") # read in function
 
 # globals
 fgczProject <- "p27048"
-descri <- "getHeatmapPlus_betterClassified_June24"
+descri <- "getHeatmapPlus_vGithub"
 
-# read in csv
-# see how many csv files are in folder, read in all and concatenate! # the MascotExport directory should only contain files of interest
-#allResultFiles <- system("ls ../2024-01-30_withMascotExports/*.csv")
-allFiles <- dir(path = "../2024-01-30_withMascotExports/", full.names = TRUE)
-myCSVs <- allFiles[grepl(x = allFiles, pattern = ".*AllFrom.*.csv")]
+# read in data and do some preprocessing
+source("p27048_somePreprocessing.R")
 
-# get in the first
-dat <- read_csv(file = myCSVs[1])
-for (i in 2:length(myCSVs)) {
-  myDat <- read_csv(file = myCSVs[i])
-  dat <- rbind(myDat, dat)
-}
 
-# do some filtering
-# rank = 1
-# bold_red = 1
-
-# maybe further pep_expect or pep_score, maybe decoy hits (REV_) -> no we keep it at this point to calculate protFDR afterwards!
-datOK <- dat |> filter(pep_rank == 1 &  pep_isbold == 1)
-datOK$rawFile <- sapply(strsplit(sapply(strsplit((datOK$pep_scan_title), split = "\\\\"), function(x)x[6]), split = "\\."), function(x)x[1])
-
-# clip off the first 21 characters for better sample names! #str_sub
-datOK$nameTag <- str_sub(string = datOK$rawFile, start = 22, end = nchar(datOK$rawFile))
-
-# psms per nametag -> rawFile
+# how does it look
 table(datOK$nameTag)
 
 # joining back better sample names and col annotation from Shevan!
