@@ -72,7 +72,7 @@ dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
 
 dim(relevantTableMat)
 
-grepl(x = colnames(relevantTableMat), pattern = "enya")
+colnames(relevantTableMat)[grepl(x = colnames(relevantTableMat), pattern = "ARCH")]
 
 # looks like here we do loose a lot of psms.. where are they?
 # write_tsv(as.data.frame(relevantTableMat), "relevantTable_correctlyJoined_2024-06-07.tsv")
@@ -181,15 +181,8 @@ sum(numRev)
 color_vector <- c("red", "white") # red for decoy! white for fw  --> this should probably be ommited for the final matrix
 # Map colors to levels in the data vector
 fwOrrevColor <- as.matrix(color_vector[as.numeric(factor(REVorFW))], ncol = 1)
-fwOrrevColor
 
 # Now we should use our classifications to come up with better protein colors
-dim(myHumanProteins)
-head(rownames(filtMat))
-head(myHumanProteins)
-length(unique(myHumanProteins$Primary))
-table(myHumanProteins$Primary)
-
 specialProteinsClassification_bodyParts <- matrix("other",nrow = nrow(filtMat[bool_homo, ]), ncol = 1 )
 specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Several") > 0] <- "Several"
 specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Saliva|Blood|Digestive") > 0] <- "BodyFluid"
