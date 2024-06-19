@@ -73,10 +73,14 @@ datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined
 
 # we have to take species into protein name only like this makes sense
 dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
-
 dim(relevantTableMat)
 
-colnames(relevantTableMat)[grepl(x = colnames(relevantTableMat), pattern = "ARCH")]
+# check here also for new raw-files
+dim(tableWrawfiles <- table(datJoined$myProteins, datJoined$rawFile))
+newIDs <- which(grepl(x=colnames(tableWrawfiles), pattern = "20230405"))
+newPSMs <- tableWrawfiles[, newIDs]
+colSums(tableWrawfiles[, newIDs])
+View(newPSMs) # here we see what proteins are found in the new raw-files
 
 # get sum column
 head(relevantTableMat)
