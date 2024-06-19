@@ -78,15 +78,12 @@ dim(relevantTableMat)
 
 colnames(relevantTableMat)[grepl(x = colnames(relevantTableMat), pattern = "ARCH")]
 
-# looks like here we do loose a lot of psms.. where are they?
-# write_tsv(as.data.frame(relevantTableMat), "relevantTable_correctlyJoined_2024-06-07.tsv")
-
 # get sum column
 head(relevantTableMat)
 myPSMsum <- rowSums(relevantTableMat)
 
 # protFDR before filtering
-dim(relevantTableMat)
+dim(relevantTableMat) # now 526 rows
 get_protFDR(relevantTableMat)
 
 # filtering on rowSum with PSM threshold
@@ -96,7 +93,7 @@ bool_keep <- myPSMsum >= PSMthreshold
 
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
-dim(filtMat)
+dim(filtMat) # back to 362 rows
 get_protFDR(filtMat) # 1.105%
 
 
