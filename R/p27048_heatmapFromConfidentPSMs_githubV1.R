@@ -58,6 +58,18 @@ protAnno$TrivialName <- gsub(x = protAnno$TrivialName, pattern = " $", replaceme
 datJoined_withSampleAnno <- as.data.frame(datJoined_withSampleAnno)
 protAnno <- as.data.frame(protAnno)
 
+# what kind of proteins do we find in the new files
+rawF_protAcc <- table(datJoined_withSampleAnno$rawFile, datJoined_withSampleAnno$prot_acc)
+dim(rawF_protAcc)
+newIDs <- which(grepl(x=row.names(rawF_protAcc), pattern = "20230405"))
+newPSMs <- rawF_protAcc[newIDs,]
+colSums(rawF_protAcc[newIDs,])
+View(newPSMs) # here we see what proteins are found in the new raw-files
+
+write_tsv(file = "newProteinAccessionsInNewFiles.tsv", newPSMs)
+
+
+
 # all left joined
 datJoined <- left_join(x = datJoined_withSampleAnno, y = protAnno, by = c("prot_acc" = "prot_acc"))
 
@@ -74,13 +86,6 @@ datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined
 # we have to take species into protein name only like this makes sense
 dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
 dim(relevantTableMat)
-
-# check here also for new raw-files
-dim(tableWrawfiles <- table(datJoined$myProteins, datJoined$rawFile))
-newIDs <- which(grepl(x=colnames(tableWrawfiles), pattern = "20230405"))
-newPSMs <- tableWrawfiles[, newIDs]
-colSums(tableWrawfiles[, newIDs])
-View(newPSMs) # here we see what proteins are found in the new raw-files
 
 # get sum column
 head(relevantTableMat)
