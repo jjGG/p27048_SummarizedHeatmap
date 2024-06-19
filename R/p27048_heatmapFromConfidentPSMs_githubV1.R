@@ -46,6 +46,10 @@ datJoined_withSampleAnno <- left_join(x = datOK, y= sampleAnno, by="rawFile")
 sum(datJoined_withSampleAnno$nameTag.x == datJoined_withSampleAnno$nameTag.y, na.rm = TRUE)
 datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.x
 
+# which ones are missing now from the annotation?
+newSampleNamesNrawFile_annotation_June2024 <-  datJoined_withSampleAnno |> select(rawFile, nameTag, Location, Time) |> distinct()
+write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
+
 # second join
 # in some we find a space at the end before newline.. -> difficult to spot
 protAnno$TrivialName <- gsub(x = protAnno$TrivialName, pattern = " $", replacement = "")
