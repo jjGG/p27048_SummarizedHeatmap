@@ -66,7 +66,7 @@ newPSMs <- rawF_protAcc[newIDs,]
 colSums(rawF_protAcc[newIDs,])
 View(newPSMs) # here we see what proteins are found in the new raw-files
 
-write_tsv(file = "newProteinAccessionsInNewFiles.tsv", newPSMs)
+write_tsv(file = "newProteinAccessionsInNewFiles.tsv", as.data.frame(newPSMs))
 
 
 
