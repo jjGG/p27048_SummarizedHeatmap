@@ -50,8 +50,9 @@ datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.x
 # which ones are missing now from the annotation?
 newSampleNamesNrawFile_annotation_June2024 <-  datJoined_withSampleAnno |> select(rawFile, nameTag, Location, Time) |> distinct()
 #write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
-#newSampleNamesNrawFile_annotation_June2024
-#newSampleNamesNrawFile_annotation_June2024[is.na(newSampleNamesNrawFile_annotation_June2024$Time),]
+
+# these will be taken out later (faulty injections or blanks)
+newSampleNamesNrawFile_annotation_June2024[is.na(newSampleNamesNrawFile_annotation_June2024$Time),]
 
 # second join
 # in some we find a space at the end before newline.. -> difficult to spot
@@ -60,16 +61,6 @@ protAnno$TrivialName <- gsub(x = protAnno$TrivialName, pattern = " $", replaceme
 # why we cannnot join anymore?
 datJoined_withSampleAnno <- as.data.frame(datJoined_withSampleAnno)
 protAnno <- as.data.frame(protAnno)
-
-# what kind of proteins do we find in the new files -> can be removed afterwards
-# rawF_protAcc <- table(datJoined_withSampleAnno$rawFile, datJoined_withSampleAnno$prot_acc)
-# dim(rawF_protAcc)
-# newIDs <- which(grepl(x=row.names(rawF_protAcc), pattern = "20230405"))
-# newPSMs <- rawF_protAcc[newIDs,]
-# colSums(rawF_protAcc[newIDs,])
-# View(newPSMs) # here we see what proteins are found in the new raw-files
-# write_tsv(file = "newProteinAccessionsInNewFiles.tsv", as.data.frame(newPSMs))
-
 
 
 # all left joined
@@ -104,7 +95,7 @@ bool_keep <- myPSMsum >= PSMthreshold
 
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
-dim(filtMat) # back to 362 rows
+dim(filtMat) # back to 362 proteins 104 samples
 get_protFDR(filtMat) # 1.105%
 
 
@@ -134,13 +125,18 @@ dim(protAnno)
 #we have to make protAnno unique first based on our annotation without sp-Acc
 protAnno_unique <- protAnno |> select(TrivialName, Species, Primary, Secondary) |> distinct()
 protAnno_unique$TrivialName <-  gsub(x = protAnno_unique$TrivialName, pattern = " ", replacement = "_")
-#dim(protAnno)
-#dim(protAnno_unique)
 
 #  here is an issue -> issue solved by removing doubs from input, Keratin_32 classified  as Hair!
 colnames(protAnno_unique)[1] <- "desc"
+colnames(protAnno_unique)
+protAnno_unique$Species <- gsub(x = protAnno_unique$Species,pattern = " ", replacement = "_")
+protAnno_unique$FullDesc <- paste(protAnno_unique$desc,protAnno_unique$Species, sep = "~" )
+protAnno_unique$desc <- NULL
+protAnno_unique$Species <- NULL
+
 myHumanProteins <- left_join(x = myHumanProteins, y = protAnno_unique) #Joining with `by = join_by(desc)`
 dim(myHumanProteins) # why do we get more here?
+
 # Now we have 361 proteins (human) left
 
 #
@@ -163,13 +159,14 @@ colnames(filtMat)[Times == "NA"] # this filter can be used
 colnames(filtMat)[Location == "NA"] # we want to keep "090_Beth~NA~ARCH_SouthAfrica"
 
 # do we still have the kenya samples?
-grepl(x = colnames(filtMat), "enya") # no they are all gone?
+sum(grepl(x = colnames(filtMat), "enya")) # yes 7
 
 
 # Define colors for each level
-length(Location)
+unique(Location)
+length(unique(Location))
 # Map colors to levels in the data vector
-color_vector_loc <- c("darkred", "orange", "red", "pink")
+color_vector_loc <- c("darkred", "orange", "red", "pink", "lightgreen")
 assigned_colors_locations <- as.matrix(color_vector_loc[as.numeric(factor(Location))], ncol = 1)
 color_vector_times <- c("darkblue", "blue", "lightblue", "yellow")
 assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))], ncol = 1)
@@ -232,7 +229,7 @@ colorNproteins <- data.frame(cbind(row_side_colors_matrix, myHumanProteins))
 #write_tsv(colorNproteins, file = "ColorSchemeForProteins_new.tsv")
 
 # plotting
-pdf("p27048_heatmap_HUMANonly_correctlyJoined_bigPage_withRowcolorsForSITES.pdf", 35,35)
+pdf("p27048_heatmap_HUMANonly_bigPage_withRowcolorsForSITES.pdf", 35,35)
 # Create the heatmap with row side colors list
 heatmap.plus(
   filtMat[bool_homo, ],
