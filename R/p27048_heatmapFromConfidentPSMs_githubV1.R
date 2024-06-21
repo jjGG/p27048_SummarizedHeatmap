@@ -61,15 +61,14 @@ protAnno$TrivialName <- gsub(x = protAnno$TrivialName, pattern = " $", replaceme
 datJoined_withSampleAnno <- as.data.frame(datJoined_withSampleAnno)
 protAnno <- as.data.frame(protAnno)
 
-# what kind of proteins do we find in the new files
-rawF_protAcc <- table(datJoined_withSampleAnno$rawFile, datJoined_withSampleAnno$prot_acc)
-dim(rawF_protAcc)
-newIDs <- which(grepl(x=row.names(rawF_protAcc), pattern = "20230405"))
-newPSMs <- rawF_protAcc[newIDs,]
-colSums(rawF_protAcc[newIDs,])
-View(newPSMs) # here we see what proteins are found in the new raw-files
-
-write_tsv(file = "newProteinAccessionsInNewFiles.tsv", as.data.frame(newPSMs))
+# what kind of proteins do we find in the new files -> can be removed afterwards
+# rawF_protAcc <- table(datJoined_withSampleAnno$rawFile, datJoined_withSampleAnno$prot_acc)
+# dim(rawF_protAcc)
+# newIDs <- which(grepl(x=row.names(rawF_protAcc), pattern = "20230405"))
+# newPSMs <- rawF_protAcc[newIDs,]
+# colSums(rawF_protAcc[newIDs,])
+# View(newPSMs) # here we see what proteins are found in the new raw-files
+# write_tsv(file = "newProteinAccessionsInNewFiles.tsv", as.data.frame(newPSMs))
 
 
 
@@ -128,7 +127,6 @@ myHumanProteins <-data.frame(rownames(filtMat)[bool_homo])
 
 colnames(myHumanProteins) <- "FullDesc"
 #myHumanProteins$desc <- sapply(strsplit(myHumanProteins$FullDesc, split = "~"), function(x)x[1])
-
 # check in original file for classes
 protAnno$desc <-  gsub(x = protAnno$TrivialName, pattern = " ", replacement = "_")
 dim(protAnno)
