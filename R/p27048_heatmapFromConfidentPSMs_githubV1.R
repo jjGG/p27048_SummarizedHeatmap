@@ -20,7 +20,8 @@ source("p27048_somePreprocessing.R")
 table(datOK$nameTag)
 
 # joining back better sample names and col annotation from Shevan!
-sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V6.txt")
+# sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V6.txt")
+sampleAnno <- read_tsv(file = "newSampleNamesNrawFile_annotation_June2024-V7.txt")
 colnames(sampleAnno) <- c("rawFile", "nameTag", "Time", "Location")
 
 
@@ -48,7 +49,9 @@ datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.x
 
 # which ones are missing now from the annotation?
 newSampleNamesNrawFile_annotation_June2024 <-  datJoined_withSampleAnno |> select(rawFile, nameTag, Location, Time) |> distinct()
-write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
+#write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
+#newSampleNamesNrawFile_annotation_June2024
+#newSampleNamesNrawFile_annotation_June2024[is.na(newSampleNamesNrawFile_annotation_June2024$Time),]
 
 # second join
 # in some we find a space at the end before newline.. -> difficult to spot
