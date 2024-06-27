@@ -192,8 +192,9 @@ fwOrrevColor <- as.matrix(color_vector[as.numeric(factor(REVorFW))], ncol = 1)
 
 # Now we should use our classifications to come up with better protein colors
 specialProteinsClassification_bodyParts <- matrix("other",nrow = nrow(filtMat[bool_homo, ]), ncol = 1 )
+table(myHumanProteins$Primary)
 specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Several") > 0] <- "Several"
-specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Saliva|Blood|Digestive") > 0] <- "BodyFluid"
+specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Saliva|Blood|Digestive|Milk|Urine") > 0] <- "BodyFluid"
 specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Skin|Hair|Muscle") > 0] <- "BodyPart"
 table(specialProteinsClassification_bodyParts)
 
@@ -212,9 +213,12 @@ specialProteinsClassification_sex[str_count(string = myHumanProteins$Secondary, 
 specialProteinsClassification_sex[str_count(string = myHumanProteins$Secondary, pattern = "Female") > 0] <- "female"
 specialProteinsClassification_sex[str_count(string = myHumanProteins$Secondary, pattern = "Male/Female") > 0] <- "Male_Female"
 table(specialProteinsClassification_sex)
+table(myHumanProteins$Secondary)
+
 
 # Define colors for each level
 length(unique(specialProteinsClassification_sex))
+(unique(specialProteinsClassification_sex))
 color_vector <- c("yellow", "blue", "green", "white")
 # Map colors to levels in the data vector
 specialProteinsClassification_sex <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_sex))], ncol = 1)
