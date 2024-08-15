@@ -200,7 +200,7 @@ table(specialProteinsClassification_bodyParts)
 
 # Define colors for each level
 length(unique(specialProteinsClassification_bodyParts))
-color_vector <- c("red", "orange", "white", "beige")
+color_vector <- c("red2", "tan4", "black", "khaki2")
 # Map colors to levels in the data vector
 specialProteinsClassification_bodyParts <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_bodyParts))], ncol = 1)
 
