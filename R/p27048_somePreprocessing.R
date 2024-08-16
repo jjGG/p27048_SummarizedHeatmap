@@ -3,8 +3,8 @@
 # Jonas Grossmann <jg@fgcz.ethz.ch>
 # 2024
 #
-#
-setwd("~/Dropbox/GITHUB/OES beads/p27048_SummarizedHeatmap/R")
+#set working directory
+#setwd("~/Dropbox/GITHUB/OES beads/p27048_SummarizedHeatmap/R")
 # read in csv
 # see how many csv files are in folder, read in all and concatenate! # the MascotExport directory should only contain files of interest
 #allResultFiles <- system("ls ../2024-01-30_withMascotExports/*.csv")
