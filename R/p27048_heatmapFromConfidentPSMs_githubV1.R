@@ -10,7 +10,7 @@ source("p27048_usefulFunctions.R") # read in function
 
 # globals
 fgczProject <- "p27048"
-descri <- "getHeatmapPlus_vGithub"
+descri <- "workOnColors"
 
 # read in data and do some preprocessing
 source("p27048_somePreprocessing.R")
@@ -135,10 +135,9 @@ protAnno_unique$desc <- NULL
 protAnno_unique$Species <- NULL
 
 myHumanProteins <- left_join(x = myHumanProteins, y = protAnno_unique) #Joining with `by = join_by(desc)`
-dim(myHumanProteins) # why do we get more here?
+dim(myHumanProteins)
 
 # Now we have 361 proteins (human) left
-
 #
 # working on archeological sites for col_side_colors
 #
@@ -165,6 +164,7 @@ sum(grepl(x = colnames(filtMat), "enya")) # yes 7
 # Define colors for each level
 unique(Location)
 length(unique(Location))
+
 # Map colors to levels in the data vector
 color_vector_loc <- c("darkred", "orange", "red", "pink", "lightgreen")
 assigned_colors_locations <- as.matrix(color_vector_loc[as.numeric(factor(Location))], ncol = 1)
@@ -174,6 +174,8 @@ assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))]
 assigned_colors <- cbind(assigned_colors_locations, assigned_colors_times)
 head(assigned_colors)
 
+# here how the colors are defined for the samples
+cbind(colnames(filtMat), assigned_colors)
 
 
 # Create a matrix with multiple colors for each row
@@ -201,12 +203,13 @@ table(specialProteinsClassification_bodyParts)
 # Define colors for each level.
 # BodyPart should be tan4, BodyFluid should be red, and Several should be khaki2, Other should be black
 length(unique(specialProteinsClassification_bodyParts))
-# several = 
-# BodyFluid = 
-# Bodypart = 
-# whatIsTheFourthCategory = 
 
+# several = khaki2
+# BodyFluid = red
+# Bodypart = tan4
+# other = black
 color_vector <- c("red2", "tan4", "black", "khaki2")
+
 # Map colors to levels in the data vector
 specialProteinsClassification_bodyParts <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_bodyParts))], ncol = 1)
 
@@ -224,9 +227,10 @@ table(myHumanProteins$Secondary)
 
 # Define colors for each level
 ## I would like "male" to be darklue, "female" to be gold and the male_female to be forestgreen, and blanks to be white.
+table(myHumanProteins$Secondary)
 length(unique(specialProteinsClassification_sex))
 (unique(specialProteinsClassification_sex))
-color_vector <- c("gold", "darkblue", "white", "forestgreen")
+color_vector <- c("gold", "darkblue", "forestgreen", "white")
 # Map colors to levels in the data vector
 specialProteinsClassification_sex <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_sex))], ncol = 1)
 
@@ -234,13 +238,20 @@ specialProteinsClassification_sex <- as.matrix(color_vector[as.numeric(factor(sp
 
 # bind together
 row_side_colors_matrix <- cbind(fwOrrevColor, specialProteinsClassification_bodyParts, specialProteinsClassification_sex)
+dim(row_side_colors_matrix)
+dim(myHumanProteins)
+
+# here to check what proteins are assigned to what colors w/ its categories before..
+tt <- cbind(myHumanProteins, row_side_colors_matrix)
+View(tt)
 
 # color scheme for proteins
 colorNproteins <- data.frame(cbind(row_side_colors_matrix, myHumanProteins))
 #write_tsv(colorNproteins, file = "ColorSchemeForProteins_new.tsv")
 
 # plotting
-pdf("p27048_heatmap_HUMANonly_bigPage_withRowcolorsForSITES.pdf", 35,35)
+(fN <- paste(fgczproject, "_", descri, "_bigPage", ".pdf",sep = ""))
+pdf(fN, 35,35)
 # Create the heatmap with row side colors list
 heatmap.plus(
   filtMat[bool_homo, ],
@@ -266,7 +277,8 @@ colnames(filtMat[bool_homo,-which(grepl(x = colnames(filtMat[bool_homo, ]), "NA"
 
 
 # plotting
-pdf("p27048_heatmap_HUMANonly_betterColors_noBlanks_min5psms.pdf", 35,35)
+(fN <- paste(fgczproject, "_", descri, "_min5psms", ".pdf",sep = ""))
+pdf(fN, 35,35)
 # Create the heatmap with row side colors list
 heatmap.plus(
   filtMat[bool_homo, -idx_takeout],
@@ -308,7 +320,8 @@ filtMat_min10 <- newFiltMat[bool_keep_10,]
 
 # 
 rscol2 <- row_side_colors_matrix[bool_keep_10, ]
-pdf("p27048_heatmap_HUMANonly_betterColors_noBlanks_min10psms.pdf", 31,31)
+(fN <- paste(fgczproject, "_", descri, "_noBlanks_min10psms", ".pdf",sep = ""))
+pdf(fN, 31,31)
 # Create the heatmap with row side colors list
 heatmap.plus(
   filtMat_min10,
@@ -334,6 +347,7 @@ filtMat_min20 <- newFiltMat[bool_keep_20,]
 
 
 rscol3 <- row_side_colors_matrix[bool_keep_20, ]
+(fN <- paste(fgczproject, "_", descri, "_noBlanks_min20psms", ".pdf",sep = ""))
 pdf("p27048_heatmap_HUMANonly_betterColors_noBlanks_min20psms.pdf", 25,25)
 heatmap.plus(
   filtMat_min20,
