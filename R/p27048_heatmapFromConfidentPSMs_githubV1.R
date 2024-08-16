@@ -198,7 +198,8 @@ specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Prima
 specialProteinsClassification_bodyParts[str_count(string = myHumanProteins$Primary, pattern = "Skin|Hair|Muscle") > 0] <- "BodyPart"
 table(specialProteinsClassification_bodyParts)
 
-# Define colors for each level
+# Define colors for each level.
+# BodyPart should be tan4, BodyFluid should be red, and Several should be khaki2, Other should be black
 length(unique(specialProteinsClassification_bodyParts))
 color_vector <- c("red2", "tan4", "black", "khaki2")
 # Map colors to levels in the data vector
@@ -217,9 +218,10 @@ table(myHumanProteins$Secondary)
 
 
 # Define colors for each level
+## I would like "male" to be darklue, "female" to be gold and the male_female to be forestgreen, and blanks to be white.
 length(unique(specialProteinsClassification_sex))
 (unique(specialProteinsClassification_sex))
-color_vector <- c("yellow", "blue", "green", "white")
+color_vector <- c("gold", "darkblue", "white", "forestgreen")
 # Map colors to levels in the data vector
 specialProteinsClassification_sex <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_sex))], ncol = 1)
 
