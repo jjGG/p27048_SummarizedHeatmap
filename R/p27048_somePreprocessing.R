@@ -19,7 +19,7 @@ for (i in 2:length(myCSVs)) {
   dat <- rbind(myDat, dat)
 }
 
-# do some filtering
+# do some filtering -> I realized that most BUT NOT ALL are having evalues < 0.05.. -> still do some filtering??
 # rank = 1
 # bold_red = 1
 
