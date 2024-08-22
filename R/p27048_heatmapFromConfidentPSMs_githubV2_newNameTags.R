@@ -20,6 +20,10 @@ source("p27048_somePreprocessing.R")
 # here nameTag from rawFileName
 table(datOK$nameTag)
 
+#filtering for distinct and evalue
+# datOK <- datOK |> distinct() |> filter(pep_expect < pExpectThreshold)
+
+
 # joining back better sample names and col annotation from Shevan!
 # sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V6.txt")
 sampleAnno <- read_tsv(file = "newSampleNamesNrawFile_annotation_Aug2024-V9-newNameTags.txt")
@@ -82,15 +86,17 @@ datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined
 # summarize psms by table -> all non human proteins will be NA~NA
 # we have to take species into protein name only like this makes sense
 dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
-dim(relevantTableMat)
+#> dim(relevantTableMat)
+#[1] 524 104
 
 # get sum column
 head(relevantTableMat)
 myPSMsum <- rowSums(relevantTableMat)
 
 # protFDR before filtering
-dim(relevantTableMat) # now 526 rows
+dim(relevantTableMat) # now 526 rows -> 524
 get_protFDR(relevantTableMat)
+# 1.711 -> 1.718
 
 # filtering on rowSum with PSM threshold
 PSMthreshold <- 5
@@ -99,8 +105,8 @@ bool_keep <- myPSMsum >= PSMthreshold
 
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
-dim(filtMat) # back to 362 proteins 104 samples
-get_protFDR(filtMat) # 1.105%
+dim(filtMat) # back to 366  without  filtering for eValue
+get_protFDR(filtMat) # 1.093 -> 1.166%
 
 
 
@@ -112,8 +118,8 @@ filtMat[filtMat == 0] <- NA
 myKeyword <- "Homo" # maybe here also use HUMAN to not loose contaminants..
 
 bool_homo <- str_count(string = row.names(filtMat), pattern = myKeyword) > 0
-sum(bool_homo) #  361 human proteins left
-length(bool_homo)
+sum(bool_homo) #  361 human proteins left -> 342 (365 w/o evalue filter due to new search results)
+
 
 filtMat[which(bool_homo == FALSE),] # this one NA~NA gathers quite some  psms.. -> these are NON Human proteins
 
@@ -141,7 +147,7 @@ protAnno_unique$Species <- NULL
 myHumanProteins <- left_join(x = myHumanProteins, y = protAnno_unique) #Joining with `by = join_by(desc)`
 dim(myHumanProteins)
 
-# Now we have 361 proteins (human) left
+# Now we have 342 proteins (human) left w/ eValue < 0.05
 #
 # working on archeological sites for col_side_colors
 #

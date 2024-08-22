@@ -19,7 +19,7 @@ for (i in 2:length(myCSVs)) {
   dat <- rbind(myDat, dat)
 }
 
-# do some filtering -> I realized that most BUT NOT ALL are having evalues < 0.05.. -> still do some filtering??
+# do some filtering -> most BUT NOT ALL are having evalues < 0.05.. -> still do some filtering??
 # rank = 1
 # bold_red = 1
 
@@ -29,4 +29,14 @@ datOK$rawFile <- sapply(strsplit(sapply(strsplit((datOK$pep_scan_title), split =
 
 # clip off the first 21 characters for better sample names! #str_sub
 datOK$nameTag <- str_sub(string = datOK$rawFile, start = 22, end = nchar(datOK$rawFile))
+
+# every scan only once?
+datOK |> dim()
+
+datOK |> distinct() |> dim()
+
+pExpectThreshold <- 0.05
+datOK |> distinct() |> filter(pep_expect < pExpectThreshold) |> dim()
+
+
 
