@@ -35,8 +35,5 @@ datOK |> dim()
 
 datOK |> distinct() |> dim()
 
-pExpectThreshold <- 0.05
-datOK |> distinct() |> filter(pep_expect < pExpectThreshold) |> dim()
-
 
 
