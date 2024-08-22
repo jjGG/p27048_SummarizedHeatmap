@@ -10,9 +10,8 @@ source("p27048_usefulFunctions.R") # read in function
 
 # globals
 fgczProject <- "p27048"
-descri <- "newNameTagFile"
+descri <- "nomoreDecoys"
 
-# read in data and do some preprocessing
 source("p27048_somePreprocessing.R")
 
 
@@ -111,10 +110,20 @@ bool_keep <- myPSMsum >= PSMthreshold
 
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
+
 dim(filtMat) # back to 366  without  filtering for eValue
 # 346 104 with eValue filtering
 get_protFDR(filtMat) # 1.093 -> 1.156%
 
+
+
+# now eliminate REVs
+decoyBool <- grepl(x = rownames(filtMat), pattern = "REV_")
+nondecoy_bool <- decoyBool == FALSE
+
+dim(filtMat)
+filtMat <- filtMat[nondecoy_bool, ]
+dim(filtMat)
 
 
 # go for heatmap plotting w gplots
@@ -205,9 +214,10 @@ numRev <- str_count(string = myHumanProteins$FullDesc, pattern = "REV_") > 0
 sum(numRev)
 
 # Define colors for each level
-color_vector <- c("red", "white") # red for decoy! white for fw  --> this should probably be ommited for the final matrix
+color_vector <- c("white", "red") # red for decoy! white for fw  --> this should probably be ommited for the final matrix
 # Map colors to levels in the data vector
 fwOrrevColor <- as.matrix(color_vector[as.numeric(factor(REVorFW))], ncol = 1)
+table(fwOrrevColor)
 
 # Now we should use our classifications to come up with better protein colors
 specialProteinsClassification_bodyParts <- matrix("other",nrow = nrow(filtMat[bool_homo, ]), ncol = 1 )
