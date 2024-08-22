@@ -21,7 +21,9 @@ source("p27048_somePreprocessing.R")
 table(datOK$nameTag)
 
 #filtering for distinct and evalue
-# datOK <- datOK |> distinct() |> filter(pep_expect < pExpectThreshold)
+pExpectThreshold <- 0.05
+datOK |> distinct() |> filter(pep_expect < pExpectThreshold) |> dim()
+
 
 
 # joining back better sample names and col annotation from Shevan!
