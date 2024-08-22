@@ -166,7 +166,7 @@ unique(Location)
 length(unique(Location))
 
 # Map colors to levels in the data vector
-color_vector_loc <- c("darkred", "orange", "red", "pink", "lightgreen")
+color_vector_loc <- c("darkred", "orange", "tan2", "tan", "darkred")
 assigned_colors_locations <- as.matrix(color_vector_loc[as.numeric(factor(Location))], ncol = 1)
 color_vector_times <- c("darkblue", "blue", "lightblue", "yellow")
 assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))], ncol = 1)
