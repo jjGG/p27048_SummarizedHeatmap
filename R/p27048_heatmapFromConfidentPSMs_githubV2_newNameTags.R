@@ -264,7 +264,7 @@ View(tt)
 
 # color scheme for proteins
 colorNproteins <- data.frame(cbind(row_side_colors_matrix, myHumanProteins))
-#write_tsv(colorNproteins, file = "ColorSchemeForProteins_new.tsv")
+# write_tsv(colorNproteins, file = "ColorSchemeForProteins_date_forShevan2check.tsv")
 
 # plotting
 (fN <- paste(fgczProject, "_", descri, "_bigPage", ".pdf",sep = ""))
