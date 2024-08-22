@@ -191,8 +191,9 @@ assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))]
 assigned_colors <- cbind(assigned_colors_locations, assigned_colors_times)
 
 # here how the colors are defined for the samples
-cbind(colnames(filtMat), assigned_colors)
-
+ss <- as.data.frame(cbind(colnames(filtMat), assigned_colors))
+View(ss)
+write_tsv(x = ss, file = "ColorScheme_forSamples_forShevan2check.tsv")
 
 # Create a matrix with multiple colors for each row
 row_side_colors_matrix <- matrix(NA, nrow = nrow(filtMat[bool_homo, ]), ncol = 2)
