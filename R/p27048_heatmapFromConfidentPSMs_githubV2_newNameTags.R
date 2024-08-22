@@ -20,9 +20,14 @@ source("p27048_somePreprocessing.R")
 # here nameTag from rawFileName
 table(datOK$nameTag)
 
-#filtering for distinct and evalue
+#filtering for and evalue
+# filtering for unique lines is done in the preprocessing (only header lines are ok to be doublicates)
 pExpectThreshold <- 0.05
-datOK |> distinct() |> filter(pep_expect < pExpectThreshold) |> dim()
+datOK |> dim()
+datOK <- datOK |> filter(pep_expect < pExpectThreshold) # at this step we looks actually quite a bit of psms
+datOK |> dim()
+# before eV filtering: 181954
+# after filtering (0.05): 133880
 
 
 
@@ -63,7 +68,7 @@ datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.y
 newSampleNamesNrawFile_annotation_June2024 <-  datJoined_withSampleAnno |> select(rawFile, nameTag, Location, Time) |> distinct()
 #write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
 
-# these will be taken out later (faulty injections or blanks)
+# these will be taken out later (faulty injections or blanks) at line round 286 (when looking for NA~NA) 
 newSampleNamesNrawFile_annotation_June2024[is.na(newSampleNamesNrawFile_annotation_June2024$Time),]
 
 # second join with protein annotation (curated manually and categorized)
@@ -88,7 +93,6 @@ datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined
 # summarize psms by table -> all non human proteins will be NA~NA
 # we have to take species into protein name only like this makes sense
 dim(relevantTableMat <- table(datJoined$myProteins, datJoined$mySampleName))
-#> dim(relevantTableMat)
 #[1] 524 104
 
 # get sum column
@@ -108,7 +112,8 @@ bool_keep <- myPSMsum >= PSMthreshold
 # filter mat according to total PSM sum threshold
 filtMat <- as.matrix(relevantTableMat[bool_keep,])
 dim(filtMat) # back to 366  without  filtering for eValue
-get_protFDR(filtMat) # 1.093 -> 1.166%
+# 346 104 with eValue filtering
+get_protFDR(filtMat) # 1.093 -> 1.156%
 
 
 
@@ -149,7 +154,7 @@ protAnno_unique$Species <- NULL
 myHumanProteins <- left_join(x = myHumanProteins, y = protAnno_unique) #Joining with `by = join_by(desc)`
 dim(myHumanProteins)
 
-# Now we have 342 proteins (human) left w/ eValue < 0.05
+# Now we have 345 proteins (human) left w/ eValue < 0.05
 #
 # working on archeological sites for col_side_colors
 #
@@ -184,7 +189,6 @@ color_vector_times <- c("navajowhite2", "lemonchiffon", "tan", "antiquewhite")
 assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))], ncol = 1)
 
 assigned_colors <- cbind(assigned_colors_locations, assigned_colors_times)
-head(assigned_colors)
 
 # here how the colors are defined for the samples
 cbind(colnames(filtMat), assigned_colors)
@@ -243,6 +247,7 @@ table(myHumanProteins$Secondary)
 length(unique(specialProteinsClassification_sex))
 (unique(specialProteinsClassification_sex))
 color_vector <- c("gold", "darkblue", "forestgreen", "white")
+
 # Map colors to levels in the data vector
 specialProteinsClassification_sex <- as.matrix(color_vector[as.numeric(factor(specialProteinsClassification_sex))], ncol = 1)
 
@@ -277,9 +282,8 @@ heatmap.plus(
 dev.off()
 
 
-# identify blanks and take them out
+# identify blanks and take them out -> key is NA~NA for location and times!
 colnames(filtMat[bool_homo, ])
-
 idx_takeout <- which(grepl(x = colnames(filtMat[bool_homo, ]), "NA~NA"))
 # to be taken out
 colnames(filtMat[bool_homo, idx_takeout]) 

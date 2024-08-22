@@ -32,8 +32,10 @@ datOK$nameTag <- str_sub(string = datOK$rawFile, start = 22, end = nchar(datOK$r
 
 # every scan only once?
 datOK |> dim()
-
 datOK |> distinct() |> dim()
+# 2024-08-22 -> all fine at the moment.. (only the 6 header lines are doublicated since we read in 6 same files)
 
+# make all lines unique
+datOK <- datOK |> distinct()
 
 
