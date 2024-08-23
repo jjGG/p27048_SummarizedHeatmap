@@ -338,7 +338,7 @@ filtMat_min10 <- newFiltMat[bool_keep_10,]
 # 
 rscol2 <- row_side_colors_matrix[bool_keep_10, ]
 (fN <- paste(fgczProject, "_", descri, "_noBlanks_min10psms", ".pdf",sep = ""))
-pdf(fN, 31,31)
+pdf("p27048_heatmap_HUMANonly_betterColors_noBlanks_min10psms.pdf", 25,25)
 # Create the heatmap with row side colors list
 heatmap.plus(
   filtMat_min10,
