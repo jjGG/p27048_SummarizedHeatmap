@@ -192,8 +192,9 @@ unique(Location)
 length(unique(Location))
 
 # Map colors to levels in the data vector
-#Can we remove the cave versus not cave line? 
+#Can we remove the cave versus not cave line (horizontal top line) as well as the male/female/both line (vertical secondary line)
 #And also change the color for ethnographic to darkblue?
+#I would also like to make two copies of this heatmaps, one for the main text and one for the SI.
 color_vector_loc <- c("darkred", "tomato4", "tomato3", "salmon3", "brown")
 assigned_colors_locations <- as.matrix(color_vector_loc[as.numeric(factor(Location))], ncol = 1)
 color_vector_times <- c("navajowhite2", "lemonchiffon", "tan", "antiquewhite")
