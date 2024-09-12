@@ -9,7 +9,7 @@
 # see how many csv files are in folder, read in all and concatenate! # the MascotExport directory should only contain files of interest
 #allResultFiles <- system("ls ../2024-01-30_withMascotExports/*.csv")
 allFiles <- dir(path = "../2024-01-30_withMascotExports/", full.names = TRUE)
-myCSVs <- allFiles[grepl(x = allFiles, pattern = ".*All.*.csv")]
+myCSVs <- allFiles[grepl(x = allFiles, pattern = "All.*.csv")]
 myCSVs
 
 # get in the first
