@@ -65,3 +65,16 @@ datOK$pep_var_mod[datOK$MethylBool]
 # 213
 
 str(datOK)
+
+
+
+#deamidation analysis
+table(is.na(datJoined$pep_var_mod_pos))
+datJoined$DeamidationBool <- str_count(datJoined$pep_var_mod_pos, pattern = "1") > 0
+datJoined$DeamidationBool[is.na(datJoined$DeamidationBool)] <- FALSE
+table(datJoined$DeamidationBool)
+#
+datJoined$pep_var_mod[datJoined$DeamidationBool]
+
+table(datJoined$pep_var_mod[datJoined$DeamidationBool])
+
