@@ -28,8 +28,6 @@ datOK |> dim()
 # before eV filtering: 181954
 # after filtering (0.05): 133880
 
-
-
 # joining back better sample names and col annotation from Shevan!
 # sampleAnno <- read_tsv(file = "p27048_sampleNamesNrawFile-V6.txt")
 sampleAnno <- read_tsv(file = "newSampleNamesNrawFile_annotation_Aug2024-V9-newNameTags.txt")
@@ -37,6 +35,8 @@ colnames(sampleAnno) <- c("rawFile", "nameTag", "Time", "Location")
 
 # clean nameTags
 sampleAnno$nameTag <- gsub(x = sampleAnno$nameTag, pattern = " ", replacement = "_")
+table(sampleAnno)
+
 
 # protein annotation for better classification w/ Shevan
 protAnno <- read.csv(file = "Human_proteins_classifications-V2_2024-05-27_noMoreDoubs.csv")
@@ -63,6 +63,8 @@ sum(datJoined_withSampleAnno$nameTag.x == datJoined_withSampleAnno$nameTag.y, na
 unique(datJoined_withSampleAnno$nameTag.y)
 datJoined_withSampleAnno$nameTag <- datJoined_withSampleAnno$nameTag.y
 
+
+
 # which ones are missing now from the annotation?
 newSampleNamesNrawFile_annotation_June2024 <-  datJoined_withSampleAnno |> select(rawFile, nameTag, Location, Time) |> distinct()
 #write_tsv(newSampleNamesNrawFile_annotation_June2024, "newSampleNamesNrawFile_annotation_June2024.tsv")
@@ -87,6 +89,24 @@ datJoined$Species <- gsub(x = datJoined$Species, pattern = " ", replacement = "_
 # work more on protNames and sampleNames and concatenated with ~ tilde
 datJoined$myProteins <- paste(datJoined$TrivialName2, datJoined$Species, sep = "~")
 datJoined$mySampleName <- paste(datJoined$nameTag, datJoined$Location, datJoined$Time, sep="~")
+
+
+# text table
+table(datJoined$DeamidationBool, datJoined$rawFile)
+
+# plot
+# q: how can I increase margin to read the labels
+pdf("Deamidation_yes_no.pdf", 19,19)
+par(mar = c(4.1, 14.4, 4.1, 1.9))
+barplot(table(datJoined$DeamidationBool, datJoined$nameTag), horiz = TRUE, las=2, margin = 1, col = c("red", "blue"), main = "Deamidation", xlab = "Count", ylab = "NameTag")
+dev.off()
+
+
+pdf("Deamidation_yes_no_nonstacked.pdf", 19,28)
+par(mar = c(4.1, 14.4, 4.1, 1.9))
+barplot(table(datJoined$DeamidationBool, datJoined$nameTag), horiz = TRUE, las=2, margin = 1, beside = TRUE, col = c("red", "blue"), main = "Deamidation", xlab = "Count", ylab = "NameTag")
+dev.off()
+
 
 # Now summarization to get heatmap
 # summarize psms by table -> all non human proteins will be NA~NA
@@ -193,9 +213,8 @@ length(unique(Location))
 
 # Map colors to levels in the data vector
 #Can we remove the cave versus not cave line (horizontal top line) as well as the male/female/both line (vertical secondary line)
-#And also change the color for ethnographic to darkblue?
 #I would also like to make two copies of this heatmaps, one for the main text and one for the SI.
-color_vector_loc <- c("darkred", "tomato4", "tomato3", "salmon3", "brown")
+color_vector_loc <- c("antiquewhite", "lemonchiffon", "navajowhite2", "brown", "tan")
 assigned_colors_locations <- as.matrix(color_vector_loc[as.numeric(factor(Location))], ncol = 1)
 color_vector_times <- c("navajowhite2", "lemonchiffon", "tan", "antiquewhite")
 assigned_colors_times <- as.matrix(color_vector_times[as.numeric(factor(Times))], ncol = 1)
