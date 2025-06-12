@@ -442,7 +442,7 @@ filtOrderedMat <- ordered_matrix[bool_keep,]
 
 # Plot without clustering
 (fN <- paste(fgczProject, "_", descri, "_pheatmap_reordered_psm",psmThreshold,"_", Sys.Date(), ".pdf", sep = ""))
-pdf(file = fN, width = 20, height =30)
+pdf(file = fN, width = 20, height =25)
 pheatmap(filtOrderedMat,
          cluster_rows = FALSE,
          cluster_cols = FALSE,
